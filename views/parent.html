@@ -1,0 +1,11 @@
+<h1>Parent view</h1>
+<p><strong>Name resolved from resolve block </strong>{{name}}</p>
+
+<a ui-sref="about({parentData: data})">Send data to about view</a>
+
+<div ng-repeat="x in data track by $index">
+	<strong>Name: </strong>{{x.name}}<br>
+	<strong>Age: </strong>{{x.age}}
+</div>
+<a ui-sref=".child">Go to child</a>
+<div ui-view></div>

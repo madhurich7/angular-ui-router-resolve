@@ -1,0 +1,16 @@
+<h1>About Page</h1>
+
+<div class="row">
+	<div class="col-sm-4">
+		<div ui-view="aboutMe"></div>
+	</div>
+	<div class="col-sm-4">
+		<div ui-view="aboutFriend"></div>
+	</div>
+	<div class="col-sm-4">
+		<div ng-repeat="x in fromParent track by $index">
+			<strong>Name: </strong>{{x.name}}<br>
+			<strong>Age: </strong>{{x.age}}
+		</div>
+	</div>
+</div>

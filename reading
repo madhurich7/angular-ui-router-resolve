@@ -1,0 +1,112 @@
+POINTS TO REMEMBER
+> By default, all state names are converted to use ui-router's dot notation (e.g. parentStateName.childStateName) in app.js file where we declare our states.
+
+> This can be disabled by calling .state() with options options.keepOriginalNames = true.
+
+when this option is not specified, when we try to go tot state "home" by clicking the link
+<a ui-sref="home">Home</a> it will check for ".home" transition to state "root.home" in app.js,
+but we din't specify .home inside of our ui-sref attribute so it throuws an error.
+
+So inorder to avoid that prefixed "dot notation" we use this keepOriginalNames as "true"
+so it directly checks fro state 'home' within state 'root'
+
+To see the effect set that value to be "false" and prefix a 'dot' before 'home' in ui-sref
+attribute it will work.
+
+REFER 
+1. https://github.com/marklagendijk/ui-router.stateHelper 
+
+Nesting of states
+1. "dot" notation
+2. stateHelperProvider
+3. String based states
+4. Object based states
+
+
+> Child inherited resolved dependencies
+> View inherited resolved dependencies
+
+POINTS TO REMEMBER
+> If two states are siblings, then a resolve function declared in one state
+will NOT BE availabe in the other state.
+
+> But if the second state is child of the frist state then the resolve decalred 
+in the parent state WILL be available in the child state.
+
+> $state.current gives the current state which is active
+
+REFER https://github.com/angular-ui/ui-router/wiki#attach-custom-data-to-state-objects
+
+		***IMPORTANT***
+		> resolve
+		> Onenter
+		> controller
+		> template
+
+			--when you have these in a state, when you go to the url corresponding
+			to that state, the order in which they will be executed
+			is 
+				1. the function inside of resolve will be executed
+				2. then OnEnter function will be called when you enter that state's url  
+			    3. then the controller will loaded
+			    4. then the template will be loaded
+
+			    .state('home', {
+					url: '/home',
+					template: '<h1>Home view</h1><div ui-view></div>',
+					data: {
+						name: 'Texas',
+						location: 'north'
+					},
+					resolve: {
+						homeResFunc: function(){
+							alert('resolve in home');
+						}
+					},
+					controller: function($state){
+						alert('controller');
+						console.log($state.current.data);
+					},
+					onEnter: function($state){
+						alert($state.current);
+					}
+				
+			})
+
+			onExit function will be executed when you exit from a particular state,
+			if you are in parent.child state then if you write onExit for parent state
+			then, even though you exited from parent and entered 'parent.child' state still the
+			parent state will be active and the onExit function will NOT be triggered.
+			That will be triggered when you compelety exit from that state, it means you
+			should not even be inside of its child state, i.e you should be in it's siblings state
+			to make that onExit function execute
+
+	YOU GOT AN ERROR saying 
+		Error: Transition superseded
+
+		REFER : https://github.com/angular-ui/ui-router/issues/3246
+		Transition superseded is probably caused by a bug in your code.
+
+A transition is a long running operation (due to async processes, etc). Transition superseded means that there was a transition #1 started and it hasn't yet completed. While it was running, a new transition #2 was also started. Transition #2 supersedes Transition #1. The promise for the transition is rejected with the message "Error: Transition Superseded" so you know the original transition is now aborted.
+
+This is normal behavior if you start a transition, then supersede it with a new transition.
+
+I'm not sure what would print the error message (I don't think we log anything like that in ui-router 0.2.x).
+
+In ui-router 1.0 we have a defaultErrorHandler which logs errors to the console, including Transition Superseded. If you don't want to log Transition Superseded in ui-router 1.0, you should customize the $state.defaultErrorHandler() and filter out errors that look like the Transition Superseded ones.
+
+Closing because this is probably not a bug. However, I'll reopen if a reproduction can be posted that demonstrates a bug.
+
+$state.go('.childStateName');-->will go to child state 
+$state.go('^.siblingStateName'); -->will go to sibling state 
+$state.go('.childStateName.grandChildStateName');-->will go grand child from current
+$state.go('^')--> will go to parent from current
+
+REFER : https://github.com/angular-ui/ui-router/wiki/Quick-Reference#to
+
+>location--if true reloads teh url
+>inherit--if true will be able to iherit the params
+>relative--$state.$current is default specifies which to see for relative statename
+>notify
+>reload--if true reloads the page
+
